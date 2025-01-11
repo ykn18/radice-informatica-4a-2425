@@ -16,3 +16,4 @@ nb-configuration.xml
 *.ear
 /EsercizioTimer/target/
 /EsercizioImpiegato/target/
+/EsercizioScuolaGUI/target/
