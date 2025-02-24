@@ -50,5 +50,7 @@ public class EsercizioSerializzazioneTrasportino {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } 
+        
+        
     }
 }

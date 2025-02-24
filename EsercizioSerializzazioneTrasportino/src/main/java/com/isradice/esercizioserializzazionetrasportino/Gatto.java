@@ -17,4 +17,10 @@ public class Gatto extends Animale implements Serializable {
     public String verso(){
         return "Miao";
     }
+
+    @Override
+    public String toString() {
+        return "Razza: " + razza + ", nome: " + this.getNome() + ", eta: " + this.getEta() + ", peso: " + this.getPeso();
+    }
+    
 }
