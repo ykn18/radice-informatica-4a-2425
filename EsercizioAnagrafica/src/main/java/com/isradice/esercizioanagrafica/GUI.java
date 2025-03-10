@@ -1,5 +1,6 @@
 package com.isradice.esercizioanagrafica;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.CardLayout;
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,8 +14,10 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 
 /**
@@ -23,6 +26,9 @@ import javax.swing.JOptionPane;
  */
 public class GUI extends javax.swing.JFrame {
 
+    private String currentOperation;
+    private Persona personaDaModificare;
+    private DefaultListModel<Persona> model = new DefaultListModel();
     private ArrayList<Persona> arrPersone = new ArrayList<>();
     private String path;
     /**
@@ -42,6 +48,7 @@ public class GUI extends javax.swing.JFrame {
         }
         ((CardLayout) this.getContentPane().getLayout()).show(this.getContentPane(), "cardHome");
     
+        lstPersone.setModel(model);
     }
 
     /**
@@ -70,8 +77,10 @@ public class GUI extends javax.swing.JFrame {
         txtEta = new javax.swing.JTextField();
         btnInserisci = new javax.swing.JButton();
         panelVisualizza = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtUtenti = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lstPersone = new javax.swing.JList<>();
+        btnCancella = new javax.swing.JButton();
+        btnModifica = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuItemInserisci = new javax.swing.JMenuItem();
@@ -183,7 +192,7 @@ public class GUI extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         panelInserisci.add(txtEta, gridBagConstraints);
 
-        btnInserisci.setText("Inserisci");
+        btnInserisci.setText("Salva");
         btnInserisci.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInserisciActionPerformed(evt);
@@ -199,11 +208,39 @@ public class GUI extends javax.swing.JFrame {
 
         panelVisualizza.setLayout(new java.awt.GridBagLayout());
 
-        txtUtenti.setColumns(20);
-        txtUtenti.setRows(5);
-        jScrollPane1.setViewportView(txtUtenti);
+        jScrollPane2.setViewportView(lstPersone);
 
-        panelVisualizza.add(jScrollPane1, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        panelVisualizza.add(jScrollPane2, gridBagConstraints);
+
+        btnCancella.setText("Cancella");
+        btnCancella.setActionCommand("cancella");
+        btnCancella.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancellaActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        panelVisualizza.add(btnCancella, gridBagConstraints);
+
+        btnModifica.setText("Modifica");
+        btnModifica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificaActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        panelVisualizza.add(btnModifica, gridBagConstraints);
 
         getContentPane().add(panelVisualizza, "cardVisualizza");
 
@@ -241,13 +278,12 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemInserisciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemInserisciActionPerformed
+        currentOperation = "inserisci";
         ((CardLayout) this.getContentPane().getLayout()).show(this.getContentPane(), "cardInserisci");
     }//GEN-LAST:event_menuItemInserisciActionPerformed
 
     private void menuItemVisualizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemVisualizzaActionPerformed
-        for(Persona p: arrPersone){
-            txtUtenti.append(p.toString() + "\n");
-        }
+        syncListModel();
         ((CardLayout) this.getContentPane().getLayout()).show(this.getContentPane(), "cardVisualizza");
     }//GEN-LAST:event_menuItemVisualizzaActionPerformed
 
@@ -256,13 +292,23 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeActionPerformed
 
     private void btnInserisciActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserisciActionPerformed
-        try{
-            arrPersone.add(new Persona(txtNome.getText(), txtCognome.getText(), Integer.parseInt(txtEta.getText())));
-            JOptionPane.showMessageDialog(this, "Utente inserito correttamente", "Inserimento riuscito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (EtaNonValidaException e){
-            JOptionPane.showMessageDialog(this, "L'eta non può essere negativa", "Errore", JOptionPane.ERROR_MESSAGE);
+        if (currentOperation == "inserisci"){
+            try{
+                arrPersone.add(new Persona(txtNome.getText(), txtCognome.getText(), Integer.parseInt(txtEta.getText())));
+                JOptionPane.showMessageDialog(this, "Utente inserito correttamente", "Inserimento riuscito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (EtaNonValidaException e){
+                JOptionPane.showMessageDialog(this, "L'eta non può essere negativa", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (currentOperation == "modifica"){
+            try{
+                personaDaModificare.setNome(txtNome.getText());
+                personaDaModificare.setCognome(txtCognome.getText());
+                personaDaModificare.setEta(Integer.parseInt(txtEta.getText()));
+                JOptionPane.showMessageDialog(this, "Utente modificato correttamente", "Inserimento riuscito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (EtaNonValidaException e){
+                JOptionPane.showMessageDialog(this, "L'eta non può essere negativa", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
         }
-        
         clearFields();
         
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("savefile"))){
@@ -302,6 +348,31 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnImportaActionPerformed
 
+    private void btnCancellaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancellaActionPerformed
+        arrPersone.remove(lstPersone.getSelectedValue());
+        syncListModel();
+        try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("savefile"))){
+            os.writeObject(arrPersone);
+        } catch(FileNotFoundException e){
+            System.out.println("Save file not found");
+        } catch (IOException e){
+            System.out.println("Could not serialize file");
+        } 
+    }//GEN-LAST:event_btnCancellaActionPerformed
+
+    private void btnModificaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificaActionPerformed
+        currentOperation = "modifica";
+        personaDaModificare = lstPersone.getSelectedValue();
+        txtNome.setText(personaDaModificare.getNome());
+        txtCognome.setText(personaDaModificare.getCognome());
+        txtEta.setText(""+personaDaModificare.getEta());
+        ((CardLayout) this.getContentPane().getLayout()).show(this.getContentPane(), "cardInserisci");
+    }//GEN-LAST:event_btnModificaActionPerformed
+
+    private void syncListModel(){
+        model.clear();
+        model.addAll(arrPersone);
+    }
     private void clearFields(){
         txtNome.setText("");
         txtCognome.setText("");
@@ -317,20 +388,9 @@ public class GUI extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            UIManager.setLookAndFeel( new FlatDarkLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
         }
         //</editor-fold>
 
@@ -343,8 +403,10 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancella;
     private javax.swing.JButton btnImporta;
     private javax.swing.JButton btnInserisci;
+    private javax.swing.JButton btnModifica;
     private javax.swing.JButton btnPath;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLabel jLabel1;
@@ -353,8 +415,9 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblPath;
+    private javax.swing.JList<Persona> lstPersone;
     private javax.swing.JMenuItem menuItemImporta;
     private javax.swing.JMenuItem menuItemInserisci;
     private javax.swing.JMenuItem menuItemVisualizza;
@@ -365,6 +428,5 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtCognome;
     private javax.swing.JTextField txtEta;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextArea txtUtenti;
     // End of variables declaration//GEN-END:variables
 }

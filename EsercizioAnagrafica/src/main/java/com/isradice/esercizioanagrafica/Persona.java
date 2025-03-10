@@ -38,13 +38,14 @@ public class Persona implements Serializable {
         return eta;
     }
 
-    public void setEta(int eta) {
+    public void setEta(int eta) throws EtaNonValidaException {
+        if(eta < 0) throw new EtaNonValidaException();
         this.eta = eta;
     }
 
     @Override
     public String toString() {
-        return "Persona{" + "nome=" + nome + ", cognome=" + cognome + ", eta=" + eta + '}';
+        return nome + " " + cognome + " " + eta;
     }
     
     
