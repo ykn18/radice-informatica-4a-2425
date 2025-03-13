@@ -27,7 +27,7 @@ import javax.swing.UIManager;
 public class GUI extends javax.swing.JFrame {
 
     private String currentOperation;
-    private Persona personaDaModificare;
+    private Persona personaDaModificare, personaDaVisualizzare;
     private DefaultListModel<Persona> model = new DefaultListModel();
     private ArrayList<Persona> arrPersone = new ArrayList<>();
     private String path;
@@ -81,6 +81,15 @@ public class GUI extends javax.swing.JFrame {
         lstPersone = new javax.swing.JList<>();
         btnCancella = new javax.swing.JButton();
         btnModifica = new javax.swing.JButton();
+        panelDettagli = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        txtNomeDettagli = new javax.swing.JTextField();
+        txtCognomeDettagli = new javax.swing.JTextField();
+        txtEtaDettagli = new javax.swing.JTextField();
+        btnDettagliIndietro = new javax.swing.JButton();
+        btnDettagliAvanti = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuItemInserisci = new javax.swing.JMenuItem();
@@ -116,7 +125,7 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(btnImporta)
                     .addComponent(btnPath)
                     .addComponent(lblPath))
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addContainerGap(604, Short.MAX_VALUE))
         );
         panelImportaLayout.setVerticalGroup(
             panelImportaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,7 +150,7 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(panelHomeLayout.createSequentialGroup()
                 .addGap(157, 157, 157)
                 .addComponent(jLabel1)
-                .addContainerGap(186, Short.MAX_VALUE))
+                .addContainerGap(520, Short.MAX_VALUE))
         );
         panelHomeLayout.setVerticalGroup(
             panelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,6 +217,11 @@ public class GUI extends javax.swing.JFrame {
 
         panelVisualizza.setLayout(new java.awt.GridBagLayout());
 
+        lstPersone.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstPersoneMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(lstPersone);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -243,6 +257,74 @@ public class GUI extends javax.swing.JFrame {
         panelVisualizza.add(btnModifica, gridBagConstraints);
 
         getContentPane().add(panelVisualizza, "cardVisualizza");
+
+        panelDettagli.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Nome");
+        panelDettagli.add(jLabel2, new java.awt.GridBagConstraints());
+
+        jLabel3.setText("Cognome");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        panelDettagli.add(jLabel3, gridBagConstraints);
+
+        jLabel7.setText("Età");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        panelDettagli.add(jLabel7, gridBagConstraints);
+
+        txtNomeDettagli.setEnabled(false);
+        txtNomeDettagli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNomeDettagliActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        panelDettagli.add(txtNomeDettagli, gridBagConstraints);
+
+        txtCognomeDettagli.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        panelDettagli.add(txtCognomeDettagli, gridBagConstraints);
+
+        txtEtaDettagli.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        panelDettagli.add(txtEtaDettagli, gridBagConstraints);
+
+        btnDettagliIndietro.setText("<");
+        btnDettagliIndietro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDettagliIndietroActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        panelDettagli.add(btnDettagliIndietro, gridBagConstraints);
+
+        btnDettagliAvanti.setText(">");
+        btnDettagliAvanti.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDettagliAvantiActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        panelDettagli.add(btnDettagliAvanti, gridBagConstraints);
+
+        getContentPane().add(panelDettagli, "cardDettagli");
 
         jMenu1.setText("Opzioni");
 
@@ -369,6 +451,48 @@ public class GUI extends javax.swing.JFrame {
         ((CardLayout) this.getContentPane().getLayout()).show(this.getContentPane(), "cardInserisci");
     }//GEN-LAST:event_btnModificaActionPerformed
 
+    private void lstPersoneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstPersoneMouseClicked
+        if (evt.getClickCount() == 2 && !evt.isConsumed()) {
+                evt.consume();
+                personaDaVisualizzare = lstPersone.getSelectedValue();
+                int i = arrPersone.indexOf(personaDaVisualizzare);
+                btnDettagliAvanti.setEnabled(i<(arrPersone.size()-1));
+                btnDettagliIndietro.setEnabled(i>0);
+
+                txtNomeDettagli.setText(personaDaVisualizzare.getNome());
+                txtCognomeDettagli.setText(personaDaVisualizzare.getCognome());
+                txtEtaDettagli.setText(""+personaDaVisualizzare.getEta());
+                ((CardLayout) this.getContentPane().getLayout()).show(this.getContentPane(), "cardDettagli");
+        }
+    }//GEN-LAST:event_lstPersoneMouseClicked
+
+    private void txtNomeDettagliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeDettagliActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNomeDettagliActionPerformed
+
+    private void btnDettagliAvantiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDettagliAvantiActionPerformed
+        int i = arrPersone.indexOf(personaDaVisualizzare);
+        i = i+1 < arrPersone.size() ? i+1 : i; 
+        btnDettagliAvanti.setEnabled(i<(arrPersone.size()-1));
+        btnDettagliIndietro.setEnabled(i>0);
+
+        personaDaVisualizzare = arrPersone.get(i);
+        txtNomeDettagli.setText(personaDaVisualizzare.getNome());
+        txtCognomeDettagli.setText(personaDaVisualizzare.getCognome());
+        txtEtaDettagli.setText(""+personaDaVisualizzare.getEta());
+    }//GEN-LAST:event_btnDettagliAvantiActionPerformed
+
+    private void btnDettagliIndietroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDettagliIndietroActionPerformed
+        int i = arrPersone.indexOf(personaDaVisualizzare);
+        i = i-1 >= 0 ? i-1 : i; 
+        btnDettagliAvanti.setEnabled(i<(arrPersone.size()-1));
+        btnDettagliIndietro.setEnabled(i>0);
+        personaDaVisualizzare = arrPersone.get(i);
+        txtNomeDettagli.setText(personaDaVisualizzare.getNome());
+        txtCognomeDettagli.setText(personaDaVisualizzare.getCognome());
+        txtEtaDettagli.setText(""+personaDaVisualizzare.getEta());
+    }//GEN-LAST:event_btnDettagliIndietroActionPerformed
+
     private void syncListModel(){
         model.clear();
         model.addAll(arrPersone);
@@ -404,15 +528,20 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancella;
+    private javax.swing.JButton btnDettagliAvanti;
+    private javax.swing.JButton btnDettagliIndietro;
     private javax.swing.JButton btnImporta;
     private javax.swing.JButton btnInserisci;
     private javax.swing.JButton btnModifica;
     private javax.swing.JButton btnPath;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -421,12 +550,16 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemImporta;
     private javax.swing.JMenuItem menuItemInserisci;
     private javax.swing.JMenuItem menuItemVisualizza;
+    private javax.swing.JPanel panelDettagli;
     private javax.swing.JPanel panelHome;
     private javax.swing.JPanel panelImporta;
     private javax.swing.JPanel panelInserisci;
     private javax.swing.JPanel panelVisualizza;
     private javax.swing.JTextField txtCognome;
+    private javax.swing.JTextField txtCognomeDettagli;
     private javax.swing.JTextField txtEta;
+    private javax.swing.JTextField txtEtaDettagli;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtNomeDettagli;
     // End of variables declaration//GEN-END:variables
 }
